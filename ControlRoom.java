@@ -8,15 +8,23 @@ package defence_system;
  *
  * @author wwwpa
  */
-public class ControlRoom {
-    
-    public void setArea(boolean area){        
+public class ControlRoom{
+    //Helicopters helicopters = new Helicopters();
+    Helicopters helicopters;
+    Tank tank;
+    Submarine submarine;
+    public void setArea(boolean area){  
         notifyDevice(area);
     }
     
     public void notifyDevice(boolean area){
-        Observer obj = new Helicopters();
-        obj.update(area);
+       // helicopters.update(area);
+        //helicopters = new Helicopters();
+       helicopters.update(area);
+       tank.update(area);
+       submarine.update(area);
     }
+    
+    
     
 }

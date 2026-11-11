@@ -9,13 +9,33 @@ package defence_system;
  *
  * @author wwwpa
  */
-public class MainController extends javax.swing.JFrame {
-    ControlRoom controlRoom = new ControlRoom();
+public class MainController extends Observer {
+    ControlRoom controlRoom;
+    Helicopters helicopters;
+    Tank tank;
+    Submarine submarine;
+    
     /**
      * Creates new form MainController
      */
     public MainController() {
         initComponents();
+        
+        helicopters = new Helicopters();
+        tank = new Tank();
+        submarine = new Submarine();
+        controlRoom = new ControlRoom();
+        
+        
+        controlRoom.helicopters = helicopters;
+        controlRoom.tank = tank;
+        controlRoom. submarine =  submarine;
+        
+        
+        helicopters.setVisible(true);
+        tank.setVisible(true);
+        submarine.setVisible(true);
+        
         setSize(750, 440);
         setLocation(395,385);
         //setLocationRelativeTo(null);
@@ -80,7 +100,7 @@ public class MainController extends javax.swing.JFrame {
 
         jLabel4.setText("Position");
 
-        jCheckBox2.setText("Send Privetly");
+        jCheckBox2.setText("share with units");
 
         jButton2.setText("Send");
 
@@ -160,10 +180,13 @@ public class MainController extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(8, 8, 8)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(52, 52, 52)
-                        .addComponent(checkAreaMain)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(341, 341, 341)
+                                .addComponent(checkAreaMain))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 137, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(157, 157, 157)
@@ -219,8 +242,15 @@ public class MainController extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    
+    
+    
+    
     private void checkAreaMainStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkAreaMainStateChanged
-       controlRoom.setArea(checkAreaMain.isSelected());
+       //controlRoom.setArea(checkAreaMain.isSelected());
+       boolean area = checkAreaMain.isSelected();
+       controlRoom.setArea(area);
     }//GEN-LAST:event_checkAreaMainStateChanged
 
     /**
@@ -252,6 +282,7 @@ public class MainController extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new MainController().setVisible(true);
             }

@@ -16,9 +16,9 @@ public class Defence_System {
      */
     public static void main(String[] args) {
       new MainController().setVisible(true);
-       new Helicopters().setVisible(true);
-       new Tank().setVisible(true);
-       new Submarine().setVisible(true);
+     // new Helicopters().setVisible(true);
+     // new Tank().setVisible(true);
+      //new Submarine().setVisible(true);
     }
     
 }

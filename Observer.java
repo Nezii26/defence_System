@@ -14,5 +14,7 @@ public class Observer extends JFrame{
     public void update(boolean area){
     
     }
+    public void select(String h){
     
+    }
 }
