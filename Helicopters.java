@@ -52,9 +52,9 @@ public class Helicopters extends Observer {
     
     public void displayPosition(){
         //System.out.println("Slider"+sliderValue);
-        
+        //btnShoot.setEnabled(false);
         if(sliderValue >= 25 && sliderValue <= 49){
-            
+           // btnShoot.setEnabled(true);
             System.out.println("Shoot");           
             btnShoot.setBackground(Color.RED);
             btnMissile.setBackground(Color.WHITE);
@@ -139,8 +139,6 @@ public class Helicopters extends Observer {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("HELICOPTER");
-
-        checkArea1.setText("jTextField2");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
