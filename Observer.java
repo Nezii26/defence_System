@@ -15,4 +15,8 @@ public class Observer extends JFrame{
     
     }
     
+    public void updateMessage(String msg){
+       
+    }
+    
 }

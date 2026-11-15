@@ -14,6 +14,9 @@ import java.awt.Color;
 public class Helicopters extends Observer {
     int sliderValue;
     
+    ControlRoom controlRoom;
+    private int soliderCount;
+    private int ammoCount;
     
     public Helicopters(){
         initComponents();
@@ -23,11 +26,24 @@ public class Helicopters extends Observer {
         setLocation(0,0);
     }
     
+    //setters
+    public void setSoliderCount(int soliderCount){
+        this.soliderCount = soliderCount;
+    }
+    public void setammoCount(int ammoCount){
+        this.ammoCount = ammoCount;
+    }
+    //getters
+    public int soliderCount(){
+        return soliderCount;
+    }
+    public int ammoCount(){
+        return ammoCount;
+    }
+    
+    
    
-    /**
-     *
-     * @param area
-     */
+    
     @Override
     public void update(boolean area){
          System.out.println("Update called: " + area);
@@ -41,38 +57,59 @@ public class Helicopters extends Observer {
     
     }
     
+    @Override
+    public void updateMessage(String  msg){
+         //System.out.println( msg);
+         txtAreaH.setText(txtAreaH.getText() + msg + "\n");
+         
+    
+    }
+    
+   
+    public void sendMsg() {
+        String msgFromUnit = "Helicopter : "+txtmsgHelicopter.getText();
+        txtAreaH.setText(txtAreaH.getText() + msgFromUnit + "\n");
+        txtmsgHelicopter.setText("");
+        System.out.println(msgFromUnit);
+        controlRoom.getMSG(msgFromUnit);
+    }
+    
+    
+    
+    public void updateUnitMessages(String msgFromUnit){
+        
+        String oldMsg = txtAreaH.getText();
+        txtAreaH.setText(oldMsg + msgFromUnit+ "\n");
+    }
+    
     public void sliderControl(int value) {
+        
         sliderValue = value;
-        //System.out.println("Slider"+value+" "+sliderValue);
         if(jCheckBox1.isSelected()){
             displayPosition();
         }
         
     }
-    
+       
     public void displayPosition(){
         //System.out.println("Slider"+sliderValue);
-        //btnShoot.setEnabled(false);
+        btnShoot.setEnabled(false);
+        btnLaser.setEnabled(false);
+        btnMissile.setEnabled(false);
+        
         if(sliderValue >= 25 && sliderValue <= 49){
-           // btnShoot.setEnabled(true);
-            System.out.println("Shoot");           
-            btnShoot.setBackground(Color.RED);
-            btnMissile.setBackground(Color.WHITE);
-            btnLaser.setBackground(Color.WHITE);
+            btnShoot.setEnabled(true);
+            System.out.println(ammoCount); 
             
+
         }else if(sliderValue >= 50 && sliderValue <= 74){
-            
+            btnMissile.setEnabled(true);
             System.out.println("Missile Operation");            
-            btnShoot.setBackground(Color.WHITE);            
-            btnMissile.setBackground(Color.RED);
-            btnLaser.setBackground(Color.WHITE);
             
         }else if(sliderValue >= 75){
-            
+            btnLaser.setEnabled(true);
             System.out.println("Laser Operation");            
-             btnShoot.setBackground(Color.WHITE);
-              btnMissile.setBackground(Color.WHITE);
-            btnLaser.setBackground(Color.RED);
+
             
         }else{
             System.out.println("Situation Normal");
@@ -89,15 +126,14 @@ public class Helicopters extends Observer {
         btnMissile = new javax.swing.JButton();
         btnLaser = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
+        jsolider = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
-        jSpinner2 = new javax.swing.JSpinner();
+        jAmmo = new javax.swing.JSpinner();
         jCheckBox1 = new javax.swing.JCheckBox();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jTextField1 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        jSlider2 = new javax.swing.JSlider();
+        txtAreaH = new javax.swing.JTextArea();
+        txtmsgHelicopter = new javax.swing.JTextField();
+        btnSend = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         checkArea1 = new javax.swing.JTextField();
 
@@ -116,7 +152,20 @@ public class Helicopters extends Observer {
 
         jLabel2.setText("Solider Count");
 
+        jsolider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jsoliderStateChanged(evt);
+            }
+        });
+
         jLabel3.setText("Ammo Count");
+
+        jAmmo.setName(""); // NOI18N
+        jAmmo.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jAmmoStateChanged(evt);
+            }
+        });
 
         jCheckBox1.setText("Position");
         jCheckBox1.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -130,11 +179,16 @@ public class Helicopters extends Observer {
             }
         });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        txtAreaH.setColumns(20);
+        txtAreaH.setRows(5);
+        jScrollPane1.setViewportView(txtAreaH);
 
-        jButton4.setText("Send");
+        btnSend.setText("Send");
+        btnSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -162,27 +216,26 @@ public class Helicopters extends Observer {
                                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addComponent(jAmmo, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jsolider, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jSlider2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtmsgHelicopter, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(btnSend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))
                             .addComponent(checkArea1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(67, 67, 67)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(checkArea1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
@@ -190,26 +243,24 @@ public class Helicopters extends Observer {
                     .addComponent(btnShoot, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jsolider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnMissile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jAmmo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnLaser, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jCheckBox1))
-                .addGap(42, 42, 42)
-                .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(30, 30, 30)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
+                    .addComponent(txtmsgHelicopter, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSend, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
@@ -227,37 +278,29 @@ public class Helicopters extends Observer {
     }//GEN-LAST:event_jCheckBox1StateChanged
 
     private void btnShootActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShootActionPerformed
-       
+        //btnShoot.setEnabled(false);
+        jAmmo.setValue(ammoCount-1);
     }//GEN-LAST:event_btnShootActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Helicopters.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Helicopters.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Helicopters.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Helicopters.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
+        if(btnSend.isEnabled()){
+           sendMsg();            
         }
-        //</editor-fold>
+    }//GEN-LAST:event_btnSendActionPerformed
 
-        /* Create and display the form */
+    private void jsoliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jsoliderStateChanged
+        soliderCount = (int)jsolider.getValue();      
+        controlRoom.unitSoliderCount(soliderCount);        
+    }//GEN-LAST:event_jsoliderStateChanged
+
+    private void jAmmoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jAmmoStateChanged
+        ammoCount = (int)jAmmo.getValue();
+        controlRoom.unitAmmoCount(ammoCount);     
+    }//GEN-LAST:event_jAmmoStateChanged
+
+    
+    public static void main(String args[]) {
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Helicopters().setVisible(true);
@@ -268,19 +311,18 @@ public class Helicopters extends Observer {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLaser;
     private javax.swing.JButton btnMissile;
+    private javax.swing.JButton btnSend;
     private javax.swing.JButton btnShoot;
     private javax.swing.JTextField checkArea1;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JSpinner jAmmo;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSlider jSlider2;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner2;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JSpinner jsolider;
+    private javax.swing.JTextArea txtAreaH;
+    private javax.swing.JTextField txtmsgHelicopter;
     // End of variables declaration//GEN-END:variables
 
     

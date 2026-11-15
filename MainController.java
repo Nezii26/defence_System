@@ -1,5 +1,5 @@
 package defence_system;
-
+import javax.swing.*;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -9,18 +9,20 @@ package defence_system;
  *
  * @author wwwpa
  */
-public class MainController extends Observer {
+public class MainController extends JFrame{
     ControlRoom controlRoom;
     Helicopters helicopters;
     Tank tank;
     Submarine submarine;
     
-    /**
+     boolean area;  
+     /**
      * Creates new form MainController
      */
     public MainController() {
         initComponents();
         
+       
         helicopters = new Helicopters();
         tank = new Tank();
         submarine = new Submarine();
@@ -31,6 +33,22 @@ public class MainController extends Observer {
         controlRoom.tank = tank;
         controlRoom.submarine =  submarine;
         
+        helicopters.controlRoom = controlRoom;
+        tank.controlRoom = controlRoom;
+        submarine.controlRoom = controlRoom;
+
+        controlRoom.observer = new Observer() {
+            @Override
+            public void updateMessage(String msg) {
+
+                    helicopters.updateMessage(msg);
+                    tank.updateMessage(msg);
+                    submarine.updateMessage(msg);
+            }
+            
+        };
+        
+        controlRoom.mainController = this;
        
         helicopters.setVisible(true);
         tank.setVisible(true);
@@ -38,7 +56,6 @@ public class MainController extends Observer {
         
         setSize(750, 440);
         setLocation(395,385);
-        //setLocationRelativeTo(null);
     }
        
      
@@ -47,31 +64,34 @@ public class MainController extends Observer {
     private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cmbUnit = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         checkAreaMain = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         mainSlider = new javax.swing.JSlider();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jButton2 = new javax.swing.JButton();
+        lblSolider = new javax.swing.JTextField();
+        lblAmmo = new javax.swing.JTextField();
+        publicMsg = new javax.swing.JCheckBox();
+        btnSend = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         unitMessage = new javax.swing.JTextArea();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea4 = new javax.swing.JTextArea();
+        mainMsgArea = new javax.swing.JTextArea();
         jLabel9 = new javax.swing.JLabel();
 
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Defence", "Helicopter", "Tank", "Submarine" }));
+        cmbUnit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Defence", "Helicopter", "Tank", "Submarine" }));
+        cmbUnit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbUnitActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Collect Information");
 
@@ -83,8 +103,6 @@ public class MainController extends Observer {
         });
 
         jLabel1.setText("Soilder Count");
-
-        jLabel2.setText("Fuel Amount");
 
         jLabel3.setText("Ammo Amount");
 
@@ -100,15 +118,14 @@ public class MainController extends Observer {
             }
         });
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        publicMsg.setText("share with units");
+
+        btnSend.setText("Send");
+        btnSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                btnSendActionPerformed(evt);
             }
         });
-
-        jCheckBox2.setText("share with units");
-
-        jButton2.setText("Send");
 
         unitMessage.setColumns(20);
         unitMessage.setRows(5);
@@ -118,9 +135,9 @@ public class MainController extends Observer {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel8.setText("SYSTEM CONTROLLER");
 
-        jTextArea4.setColumns(20);
-        jTextArea4.setRows(5);
-        jScrollPane4.setViewportView(jTextArea4);
+        mainMsgArea.setColumns(20);
+        mainMsgArea.setRows(5);
+        jScrollPane4.setViewportView(mainMsgArea);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -131,25 +148,28 @@ public class MainController extends Observer {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(157, 157, 157)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(13, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
+                        .addGap(24, 24, 24)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField3))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblAmmo, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(lblSolider, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cmbUnit, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton1))
                             .addGroup(layout.createSequentialGroup()
@@ -163,24 +183,12 @@ public class MainController extends Observer {
                                     .addComponent(checkAreaMain)
                                     .addGap(128, 128, 128))
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jCheckBox2)
+                                    .addComponent(publicMsg)
                                     .addGap(29, 29, 29)
-                                    .addComponent(jButton2)
+                                    .addComponent(btnSend)
                                     .addGap(14, 14, 14)))
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(20, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(157, 157, 157)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(220, 220, 220)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,57 +196,85 @@ public class MainController extends Observer {
                 .addContainerGap()
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(checkAreaMain))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane4)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCheckBox2)
-                            .addComponent(jButton2))
-                        .addGap(8, 8, 8))
+                        .addComponent(checkAreaMain)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmbUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1))
+                        .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(lblSolider))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(9, 9, 9)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(mainSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(13, 13, 13)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblAmmo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(mainSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel9)
-                .addGap(10, 10, 10))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(publicMsg)
+                    .addComponent(btnSend)
+                    .addComponent(jLabel9))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    public void displayUnitMsg(String msgFromUnit){
+            
+        
+        unitMessage.setText(unitMessage.getText()+ msgFromUnit + "\n");
+        
+         if(publicMsg.isSelected()){
+            if (msgFromUnit.charAt(0) == 'H') {
+                
+                System.out.println("H");
+                submarine.updateUnitMessages(msgFromUnit);
+                tank.updateUnitMessages(msgFromUnit);
+                
+            }else if(msgFromUnit.charAt(0) == 'S'){
+                 System.out.println("S");
+                 helicopters.updateUnitMessages(msgFromUnit);
+                 tank.updateUnitMessages(msgFromUnit);
+                 
+            }else if(msgFromUnit.charAt(0) == 'T'){
+                 System.out.println("S");
+                 submarine.updateUnitMessages(msgFromUnit);
+                 helicopters.updateUnitMessages(msgFromUnit);
+                 
+            }
+             
+            
+         }
+    }
+    
+    public void mainMsg(){
+        String msg = mainMsgArea.getText();
+        controlRoom.notifyMessage("ControlRoom : "+ msg);
+              
+    }
+    
+    public void UnitSoliderCount(int soliderCount){
+        System.out.println(soliderCount);
+    }
+    public void UnitAmmoCount(int ammoCount){
+        System.out.println(ammoCount);
+    }
     
     private void checkAreaMainStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_checkAreaMainStateChanged
-       //controlRoom.setArea(checkAreaMain.isSelected());
-       boolean area = checkAreaMain.isSelected();
+       area = checkAreaMain.isSelected();
        controlRoom.setArea(area);
+       
     }//GEN-LAST:event_checkAreaMainStateChanged
-
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void mainSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_mainSliderStateChanged
        int value = mainSlider.getValue();
@@ -246,38 +282,36 @@ public class MainController extends Observer {
        tank.sliderControl(value);
        submarine.sliderControl(value);
        
-       
-       //System.out.println("slider "+value);
     }//GEN-LAST:event_mainSliderStateChanged
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
+        if(btnSend.isEnabled()){
+           mainMsg();            
         }
-        //</editor-fold>
+    }//GEN-LAST:event_btnSendActionPerformed
 
-        /* Create and display the form */
+    private void cmbUnitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbUnitActionPerformed
+        String selected = cmbUnit.getSelectedItem().toString();
+        
+        if(selected.equals("Helicopter")){
+           
+            lblSolider.setText(String.valueOf(helicopters.soliderCount()));
+            lblAmmo.setText(String.valueOf(helicopters.ammoCount()));
+                    
+            
+        }else if(selected.equals("Submarine")){
+            lblSolider.setText(String.valueOf(submarine.soliderCount()));
+            lblAmmo.setText(String.valueOf(submarine.ammoCount()));
+            
+        }else if(selected.equals("Tank")){
+            lblSolider.setText(String.valueOf(tank.soliderCount()));
+            lblAmmo.setText(String.valueOf(tank.ammoCount()));
+        }
+    }//GEN-LAST:event_cmbUnitActionPerformed
+
+    
+    public static void main(String args[]) {
+       
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -290,13 +324,11 @@ public class MainController extends Observer {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSend;
     private javax.swing.JCheckBox checkAreaMain;
+    private javax.swing.JComboBox<String> cmbUnit;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel8;
@@ -304,11 +336,11 @@ public class MainController extends Observer {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTextArea jTextArea4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField lblAmmo;
+    private javax.swing.JTextField lblSolider;
+    private javax.swing.JTextArea mainMsgArea;
     private javax.swing.JSlider mainSlider;
+    private javax.swing.JCheckBox publicMsg;
     private javax.swing.JTextArea unitMessage;
     // End of variables declaration//GEN-END:variables
 }
